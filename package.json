@@ -1,0 +1,22 @@
+{
+  "name": "spotify-sync",
+  "version": "1.0.0",
+  "description": "\u001b[3\u001b[3~",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jagvirdehal/spotify-sync.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/jagvirdehal/spotify-sync/issues"
+  },
+  "homepage": "https://github.com/jagvirdehal/spotify-sync#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
