@@ -137,6 +137,9 @@
                                 let totalStamp = response.item.duration_ms/1000;
                                 document.getElementById("timestamp").innerHTML = toTimeForamt(currStamp) + " / " + toTimeForamt(totalStamp);
 
+                                //creating progress bar
+                                document.getElementById("progressLength").style.width = (currStamp*100/totalStamp) + '%';
+
                                 //boolean that sees if the song is currently playing
                                 let is_playing = response.is_playing;
 

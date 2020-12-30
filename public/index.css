@@ -188,3 +188,20 @@ h3 {
     max-height: 30px;
     max-width: auto;
 }
+
+#progressBar {
+    height: 2px;
+    width: 400px;
+    background-color: rgb(49, 48, 48);
+    border-style: solid;
+    border-color: rgb(26, 26, 26);
+    border-width: 1px;
+    border-radius: 10px;
+}
+
+#progressLength {
+    height: 100%;
+    width: 0%;
+    border-radius: 10px;
+    background-color: rgb(32, 227, 101);
+}
