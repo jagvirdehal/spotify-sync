@@ -1,12 +1,14 @@
-var express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
-var cors = require('cors');
-var querystring = require('querystring');
-var cookieParser = require('cookie-parser');
+const fs = require('fs');
 
-var client_id = 'CLIENT_ID'; // Your client id
-var client_secret = 'CLIENT_SECRET'; // Your secret
-var redirect_uri = 'REDIRECT_URI'; // Your redirect uri
+const express = require('express'); // Express web server framework
+const request = require('request'); // "Request" library
+const cors = require('cors');
+const querystring = require('querystring');
+const cookieParser = require('cookie-parser');
+
+const client_id = fs.readFileSync('client_id.txt', {encoding: "utf-8", flag: "r"}).trim(); // Your client id
+const client_secret = fs.readFileSync('client_secret.txt', {encoding: "utf-8", flag: "r"}).trim(); // Your secret
+const redirect_uri = 'REDIRECT_URI'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters

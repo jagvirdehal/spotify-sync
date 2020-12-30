@@ -1,3 +1,7 @@
+# Client ID and Secret
+client_id.txt
+client_secret.txt
+
 # Logs
 logs
 *.log
