@@ -76,7 +76,7 @@ if (error) {
     //         document.getElementById("h1").innerHTML = (response.item.album.name);
     //     }
     // });
-    function toTimeForamt(seconds) {
+    function toTimeFormat(seconds) {
         let m = Math.floor(seconds / 60);
         let s = Math.floor(seconds % 60);
         if (s < 10) {
@@ -141,7 +141,7 @@ if (error) {
                 //creating timestamps
                 let currStamp = response.progress_ms / 1000;
                 let totalStamp = response.item.duration_ms / 1000;
-                document.getElementById("timestamp").innerHTML = toTimeForamt(currStamp) + " / " + toTimeForamt(totalStamp);
+                document.getElementById("timestamp").innerHTML = toTimeFormat(currStamp) + " / " + toTimeFormat(totalStamp);
 
                 //creating progress bar
                 document.getElementById("progressLength").style.width = (currStamp * 100 / totalStamp) + '%';
