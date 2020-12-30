@@ -127,11 +127,37 @@
                                 document.getElementById('artist').innerHTML = (artistsGroup);
 
                                 //setting song title
-                                document.getElementById('title').innerHTML = (response.item.name);
+                                let songTitle = response.item.name;
+                                const maxChar = 54;
+                                if(songTitle.length > maxChar){
+                                    document.getElementById('title').innerHTML = `${songTitle.substring(0, maxChar)}...`;
+                                }
+
+                                else{
+                                    document.getElementById('title').innerHTML = songTitle;
+                                }
                                 
                                 //setting album art
-                                document.getElementById("albumArt").src = response.item.album.images[0].url;
+                                let albumURL = response.item.album.images[0].url;
+                                document.getElementById("albumArt").src = albumURL;
+
+                                const colorThief = new ColorThief();
+                                const img = new Image();
                                 
+                                img.addEventListener('load', function() {
+                                    let mainColour = colorThief.getColor(img);
+                                    document.getElementById('listener').style.backgroundColor = `rgb(${mainColour[0]},${mainColour[1]},${mainColour[2]})`;
+                                     console.log(mainColour);
+                                });
+                                
+                                let imageURL = albumURL;
+                                let googleProxyURL = 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=';
+                                
+                                img.crossOrigin = 'Anonymous';
+                                img.src = googleProxyURL + encodeURIComponent(imageURL);
+
+
+
                                 //creating timestamps
                                 let currStamp = response.progress_ms/1000;
                                 let totalStamp = response.item.duration_ms/1000;
@@ -152,6 +178,9 @@
                                 else{
                                     document.getElementById('explicit').style.visibility = 'hidden';
                                 }
+
+                              
+                                
 
                             }
                         });
