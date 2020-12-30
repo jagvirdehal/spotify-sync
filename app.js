@@ -15,31 +15,32 @@ const redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
-let generateRandomString = function (length) {
+const generateRandomString = (length) => {
     let text = '';
     let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
     for (let i = 0; i < length; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
+
     return text;
 };
 
-let stateKey = 'spotify_auth_state';
+const stateKey = 'spotify_auth_state';
 
-let app = express();
+const app = express();
 
 app.use(express.static(__dirname + '/public'))
     .use(cors())
     .use(cookieParser());
 
-app.get('/login', function (req, res) {
+app.get('/login', (req, res) => {
 
-    let state = generateRandomString(16);
+    const state = generateRandomString(16);
     res.cookie(stateKey, state);
 
     // your application requests authorization
-    let scope = 'user-read-private user-read-email';
+    const scope = 'user-read-private user-read-email';
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
             response_type: 'code',
@@ -47,17 +48,18 @@ app.get('/login', function (req, res) {
             scope: scope,
             redirect_uri: redirect_uri,
             state: state
-        }));
+        })
+    );
 });
 
-app.get('/callback', function (req, res) {
+app.get('/callback', (req, res) => {
 
     // your application requests refresh and access tokens
     // after checking the state parameter
 
-    let code = req.query.code || null;
-    let state = req.query.state || null;
-    let storedState = req.cookies ? req.cookies[stateKey] : null;
+    const code = req.query.code || null;
+    const state = req.query.state || null;
+    const storedState = req.cookies ? req.cookies[stateKey] : null;
 
     if (state === null || state !== storedState) {
         res.redirect('/#' +
@@ -66,7 +68,7 @@ app.get('/callback', function (req, res) {
             }));
     } else {
         res.clearCookie(stateKey);
-        let authOptions = {
+        const authOptions = {
             url: 'https://accounts.spotify.com/api/token',
             form: {
                 code: code,
@@ -79,20 +81,20 @@ app.get('/callback', function (req, res) {
             json: true
         };
 
-        request.post(authOptions, function (error, response, body) {
+        request.post(authOptions, (error, response, body) => {
             if (!error && response.statusCode === 200) {
 
                 let access_token = body.access_token,
                     refresh_token = body.refresh_token;
 
-                let options = {
+                const options = {
                     url: 'https://api.spotify.com/v1/me',
                     headers: { 'Authorization': 'Bearer ' + access_token },
                     json: true
                 };
 
                 // use the access token to access the Spotify Web API
-                request.get(options, function (error, response, body) {
+                request.get(options, (error, response, body) => {
                     console.log(body);
                 });
 
@@ -101,18 +103,20 @@ app.get('/callback', function (req, res) {
                     querystring.stringify({
                         access_token: access_token,
                         refresh_token: refresh_token
-                    }));
+                    })
+                );
             } else {
                 res.redirect('/#' +
                     querystring.stringify({
                         error: 'invalid_token'
-                    }));
+                    })
+                );
             }
         });
     }
 });
 
-app.get('/refresh_token', function (req, res) {
+app.get('/refresh_token', (req, res) => {
 
     // requesting access token from refresh token
     let refresh_token = req.query.refresh_token;
@@ -126,7 +130,7 @@ app.get('/refresh_token', function (req, res) {
         json: true
     };
 
-    request.post(authOptions, function (error, response, body) {
+    request.post(authOptions, (error, response, body) => {
         if (!error && response.statusCode === 200) {
             let access_token = body.access_token;
             res.send({
