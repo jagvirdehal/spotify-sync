@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="index.css">
     <!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"> -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 </head>
@@ -33,21 +34,16 @@
 
         <script id="user-profile-template" type="text/x-handlebars-template">
       <img id ='border' src='/img/border.png'>
-      <h1 id='h1'>Welcome {{display_name}}</h1>
-      <div class="media">
-        <div class="pull-left">
-          <img class="media-object" width="150" src="{{images.0.url}}" />
+      <h1 id="h1">Welcome {{display_name}}</h1>
+      <div id='media-body'>
+        <div id='listener' style="flex-grow: 4;">
+          <img id='albumArt' src="">
         </div>
-        <div class="media-body">
-          <dl class="dl-horizontal">
-            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
-            <dt>Id</dt><dd>{{id}}</dd>
-            <dt>Email</dt><dd>{{email}}</dd>
-            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
-            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-            <dt>Country</dt><dd>{{country}}</dd>
-          </dl>
+        <div id="details" style="flex-grow: 6">
+          <h3>Currently Playing:</h3>
+          <h2 id='title'></h2>
+          <h2 id='artist'></h2>
+          <h2 id='timestamp'></h2>
         </div>
       </div>
     </script>

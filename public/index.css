@@ -114,6 +114,34 @@ h1 {
     color: white;
     font-size: 35px;
     font-family: 'Roboto', sans-serif;
+    padding-bottom: 8%;
+    padding-left: 5%;
+}
+
+
+h2 {
+    text-align: left;
+    color: white;
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+#title{
+    font-size: 25px;
+}
+
+#artist, #timestamp{
+    font-weight: 300;
+    color: rgb(207, 207, 207);
+}
+
+h3 {
+    text-align: left;
+    color: white;
+    font-size: 25px;
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: -20px;
+   
 }
 
 .container {
@@ -124,4 +152,22 @@ h1 {
     padding-left: 10%;
     padding-right: 10%;
     flex-direction: column;
+}
+
+
+#media-body {
+    display: flex;
+    flex-flow: row  wrap;
+    align-items: stretch;
+}
+
+#albumArt{
+    max-height: 300px;
+    max-width: auto;
+}
+
+#listener {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

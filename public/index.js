@@ -53,24 +53,13 @@
             
             
             
-            // //receive user's initial playback state
-            // $.ajax({
-            //     url: 'https://api.spotify.com/v1/me/player',
-            //     headers: {
-            //         'Authorization': 'Bearer ' + access_token
-            //     },
-            //     type: "GET",
-            //     success: function (response) {
-            //         document.getElementById("h1").innerHTML = (response.item.album.name);
-            //     }
-            // });
-
+            
         } else {
             // render initial screen
             $('#login').show();
             $('#loggedin').hide();
         }
-
+        
         document.getElementById('obtain-new-token').addEventListener('click', function () {
             $.ajax({
                 url: '/refresh_token',
@@ -85,17 +74,77 @@
                 });
             });
         }, false);
-
-        // document.getElementById('obtain-new-token').addEventListener('click', function () {
-        //     $.ajax({
-        //         url: 'https://api.spotify.com/v1/me/player/pause',
-        //         headers: {
-        //             'Authorization': 'Bearer ' + access_token
-        //         },
-        //         type: "PUT"
-        //     })
-        // }, true);
         
+        // document.getElementById('obtain-new-token').addEventListener('click', function () {
+            //     $.ajax({
+                //         url: 'https://api.spotify.com/v1/me/player/pause',
+                //         headers: {
+                    //             'Authorization': 'Bearer ' + access_token
+                    //         },
+                    //         type: "PUT"
+                    //     })
+                    // }, true);
+                    
+                    //// receive user's initial playback state
+                    // $.ajax({
+                    //     url: 'https://api.spotify.com/v1/me/player',
+                    //     headers: {
+                    //         'Authorization': 'Bearer ' + access_token
+                    //     },
+                    //     type: "GET",
+                    //     success: function (response) {
+                    //         document.getElementById("h1").innerHTML = (response.item.album.name);
+                    //     }
+                    // });
+                    function toTimeForamt(seconds){
+                        let m = Math.floor(seconds / 60);
+                        let s = Math.floor(seconds % 60);
+                        if(s < 10){
+                            s = '0' + s;
+                        }
+                        return(m + ":" + s);
+                    }
 
+                    setInterval(function(){ 
+                        $.ajax({
+                            url: 'https://api.spotify.com/v1/me/player/currently-playing',
+                            headers: {
+                                'Authorization': 'Bearer ' + access_token
+                            },
+                            type: "GET",
+                            success: function (response) {
+                                
+                                let numArtists = response.item.artists.length;
+                                let artistsGroup = response.item.artists[0].name;
+                                
+                                if(numArtists > 1){
+                                    for(i = 1; i < numArtists; i++){ 
+                                        artistsGroup += ", " + response.item.artists[i].name
+                                    }
+                                }
+
+                                //setting artist(s) names
+                                document.getElementById('artist').innerHTML = (artistsGroup);
+
+                                //setting song title
+                                document.getElementById('title').innerHTML = (response.item.name);
+                                
+                                //setting album art
+                                document.getElementById("albumArt").src = response.item.album.images[0].url;
+                                
+                                //creating timestamps
+                                let currStamp = response.progress_ms/1000;
+                                let totalStamp = response.item.duration_ms/1000;
+                                document.getElementById("timestamp").innerHTML = toTimeForamt(currStamp) + " / " + toTimeForamt(totalStamp);
+
+                                //boolean that sees if the song is currently playing
+                                let is_playing = response.is_playing;
+                                
+                            }
+                        });
+                    }, 500);
+
+                   
+                   
     }
 })();
