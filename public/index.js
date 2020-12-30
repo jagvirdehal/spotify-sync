@@ -139,7 +139,17 @@
 
                                 //boolean that sees if the song is currently playing
                                 let is_playing = response.is_playing;
+
+                                //showing wether the song is explicit or not
+                                let is_explicit = response.item.explicit;
                                 
+                                if(is_explicit){
+                                    document.getElementById('explicit').style.visibility = 'visible';
+                                }
+                                else{
+                                    document.getElementById('explicit').style.visibility = 'hidden';
+                                }
+
                             }
                         });
                     }, 500);

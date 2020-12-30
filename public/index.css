@@ -171,3 +171,20 @@ h3 {
     justify-content: center;
     align-items: center;
 }
+
+#obtain-new-token{
+    margin: 7%;
+}
+
+#flexContainer1 {
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+}
+
+#explicit {
+    padding-left: 1%;
+    max-height: 30px;
+    max-width: auto;
+}

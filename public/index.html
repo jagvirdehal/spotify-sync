@@ -24,6 +24,7 @@
                 <a href="https://www.spotify.com/us/signup/" class="btn-signup">Sign Up for Spotify</a>
             </div>
         </div>
+
         <div id="loggedin">
             <div id="user-profile">
             </div>
@@ -41,19 +42,17 @@
         </div>
         <div id="details" style="flex-grow: 6">
           <h3>Currently Playing:</h3>
-          <h2 id='title'></h2>
-          <h2 id='artist'></h2>
-          <h2 id='timestamp'></h2>
+          <div id='flexContainer1'>
+            <h2 id='title'></h2>
+            <img id='explicit' src='/img/explicit.png'>
+          </div>
+            <h2 id='artist'></h2>
+            <h2 id='timestamp'></h2>
         </div>
       </div>
     </script>
 
-        <script id="oauth-template" type="text/x-handlebars-template">
-      <h2>oAuth info</h2>
-      <dl class="dl-horizontal">
-        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
-      </dl>
+        <script id="oauth-template" type="text/x-handlebars-template"></script>
     </script>
 
         <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
