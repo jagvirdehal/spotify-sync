@@ -33,15 +33,11 @@ if (error) {
             },
             success: function (response) {
                 userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
-                $('#login').hide();
-                $('#loggedin').show();
             }
         });
     } else {
         // render initial screen
-        $('#login').show();
-        $('#loggedin').hide();
+        window.location.href = "/login.html";
     }
 
     document.getElementById('obtain-new-token').addEventListener('click', function () {
