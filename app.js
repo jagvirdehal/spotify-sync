@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 
 const client_id = fs.readFileSync('client_id.txt', {encoding: "utf-8", flag: "r"}).trim(); // Your client id
 const client_secret = fs.readFileSync('client_secret.txt', {encoding: "utf-8", flag: "r"}).trim(); // Your secret
-const redirect_uri = 'REDIRECT_URI'; // Your redirect uri
+const redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
