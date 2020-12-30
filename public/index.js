@@ -45,11 +45,26 @@
                 },
                 success: function (response) {
                     userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-
+                    
                     $('#login').hide();
                     $('#loggedin').show();
                 }
             });
+            
+            
+            
+            // //receive user's initial playback state
+            // $.ajax({
+            //     url: 'https://api.spotify.com/v1/me/player',
+            //     headers: {
+            //         'Authorization': 'Bearer ' + access_token
+            //     },
+            //     type: "GET",
+            //     success: function (response) {
+            //         document.getElementById("h1").innerHTML = (response.item.album.name);
+            //     }
+            // });
+
         } else {
             // render initial screen
             $('#login').show();
@@ -70,5 +85,17 @@
                 });
             });
         }, false);
+
+        // document.getElementById('obtain-new-token').addEventListener('click', function () {
+        //     $.ajax({
+        //         url: 'https://api.spotify.com/v1/me/player/pause',
+        //         headers: {
+        //             'Authorization': 'Bearer ' + access_token
+        //         },
+        //         type: "PUT"
+        //     })
+        // }, true);
+        
+
     }
 })();
