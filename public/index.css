@@ -42,7 +42,7 @@ body {
     position: relative;
 }
 
-.btn-primary {
+.btn-login {
     color: rgb(255, 255, 255);
     background: rgb(30, 215, 96);
     font-size: 15px;
@@ -56,7 +56,7 @@ body {
     text-decoration: none;
 }
 
-.btn-primary:hover {
+.btn-login:hover {
     color: rgb(255, 255, 255);
     background: rgb(32, 227, 101);
     font-size: 15px;
@@ -70,7 +70,7 @@ body {
     text-decoration: none;
 }
 
-.btn-primary1 {
+.btn-signup {
     color: rgb(255, 255, 255);
     background: rgb(58,88,151);
     font-size: 15px;
@@ -87,7 +87,7 @@ body {
 }
 
 
-.btn-primary1:hover {
+.btn-signup:hover {
     color: rgb(255, 255, 255);
     background: rgb(65, 99, 171);
     font-size: 15px;
