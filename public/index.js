@@ -18,6 +18,7 @@ let progressLengthTemp;
 let visibleTemp;
 
 
+
 var app = new Vue({
     el: '.container',
     data: {
@@ -33,16 +34,18 @@ var app = new Vue({
     },
     methods: {
         update: function(event) {
+            app.colorThiefAlbum = colorThiefAlbumTemp;
             app.display_name = display_name_temp;
             app.currStamp = currStampTemp;
             app.totalStamp = totalStampTemp;
             app.albumURL = albumURLTemp;
             app.artistsGroup = artistsGroupTemp;
             app.songTitle = songTitleTemp;
-            app.colorThiefAlbum = colorThiefAlbumTemp;
             app.progressLength = progressLengthTemp;
-            app.visible = visibleTemp;
+            app.visible = visibleTemp;   
+           
         
+            
         }
     }
   })
@@ -168,6 +171,7 @@ setInterval(function () {
             img.addEventListener('load', function () {
                 let mainColour = colorThief.getColor(img);
                 colorThiefAlbumTemp = `background-color: rgb(${mainColour[0]},${mainColour[1]},${mainColour[2]})`;
+                
             });
 
             let imageURL = albumURL;
