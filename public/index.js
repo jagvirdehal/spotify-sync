@@ -12,15 +12,56 @@ function getHashParams() {
     return hashParams;
 }
 
+// Cookie keys
+const loggedInKey = 'logged_in';
+const accessTokenKey = 'access_token';
+const refreshTokenKey = 'refresh_token';
+const expiresInKey = 'expires_in';
+const issueTimeKey = 'issue_time';
+
+const REFRESH_BUFFER = 60;
+
+// Code from W3schools
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
 var userProfileSource = document.getElementById('user-profile-template').innerHTML,
     userProfileTemplate = Handlebars.compile(userProfileSource),
     userProfilePlaceholder = document.getElementById('user-profile');
 
 var params = getHashParams();
 
-var access_token = params.access_token,
-    refresh_token = params.refresh_token,
+let access_token = getCookie(accessTokenKey),
+    refresh_token = getCookie(refreshTokenKey),
+    issue_time = getCookie(issueTimeKey),
+    expires_in = getCookie(expiresInKey),
     error = params.error;
+
+const refreshToken = () => {
+    $.ajax({
+        url: '/refresh_token',
+        data: {
+            'refresh_token': refresh_token
+        }
+    }).done(function (data) {
+        access_token = getCookie(accessTokenKey);
+        expires_in = getCookie(expiresInKey);
+        issue_time = getCookie(issueTimeKey);
+    });
+}
 
 if (error) {
     alert('There was an error during the authentication');
@@ -40,16 +81,14 @@ if (error) {
         window.location.href = "/login.html";
     }
 
-    document.getElementById('obtain-new-token').addEventListener('click', function () {
-        $.ajax({
-            url: '/refresh_token',
-            data: {
-                'refresh_token': refresh_token
-            }
-        }).done(function (data) {
-            access_token = data.access_token;
-        });
-    }, false);
+    // Check every 30 seconds for expiry
+    setInterval(() => {
+        let currentTime = new Date().getTime() / 1000;
+        let elapsedTime = currentTime - issue_time;
+        if (elapsedTime > expires_in - REFRESH_BUFFER) {
+            refreshToken();
+        }
+    }, 30);
 
     // document.getElementById('obtain-new-token').addEventListener('click', function () {
     //     $.ajax({
@@ -61,17 +100,6 @@ if (error) {
     //     })
     // }, true);
 
-    //// receive user's initial playback state
-    // $.ajax({
-    //     url: 'https://api.spotify.com/v1/me/player',
-    //     headers: {
-    //         'Authorization': 'Bearer ' + access_token
-    //     },
-    //     type: "GET",
-    //     success: function (response) {
-    //         document.getElementById("h1").innerHTML = (response.item.album.name);
-    //     }
-    // });
     function toTimeFormat(seconds) {
         let m = Math.floor(seconds / 60);
         let s = Math.floor(seconds % 60);
@@ -123,7 +151,6 @@ if (error) {
                 img.addEventListener('load', function () {
                     let mainColour = colorThief.getColor(img);
                     document.getElementById('listener').style.backgroundColor = `rgb(${mainColour[0]},${mainColour[1]},${mainColour[2]})`;
-                    console.log(mainColour);
                 });
 
                 let imageURL = albumURL;

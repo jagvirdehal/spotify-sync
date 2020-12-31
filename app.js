@@ -26,6 +26,11 @@ const generateRandomString = (length) => {
     return text;
 };
 
+const loggedInKey = 'logged_in';
+const accessTokenKey = 'access_token';
+const refreshTokenKey = 'refresh_token';
+const expiresInKey = 'expires_in';
+const issueTimeKey = 'issue_time';
 const stateKey = 'spotify_auth_state';
 
 const app = express();
@@ -94,6 +99,13 @@ app.get('/callback', (req, res) => {
 
                 let access_token = body.access_token,
                     refresh_token = body.refresh_token;
+                    expires_in = body.expires_in;
+
+                res.cookie(loggedInKey, true);
+                res.cookie(accessTokenKey, access_token);
+                res.cookie(refreshTokenKey, refresh_token);
+                res.cookie(expiresInKey, expires_in);
+                res.cookie(issueTimeKey, Math.floor(new Date().getTime() / 1000));
 
                 const options = {
                     url: 'https://api.spotify.com/v1/me',
@@ -107,12 +119,7 @@ app.get('/callback', (req, res) => {
                 });
 
                 // we can also pass the token to the browser to make requests from there
-                res.redirect('/#' +
-                    querystring.stringify({
-                        access_token: access_token,
-                        refresh_token: refresh_token
-                    })
-                );
+                res.redirect('/');
             } else {
                 res.redirect('/#' +
                     querystring.stringify({
@@ -140,10 +147,14 @@ app.get('/refresh_token', (req, res) => {
 
     request.post(authOptions, (error, response, body) => {
         if (!error && response.statusCode === 200) {
-            let access_token = body.access_token;
-            res.send({
-                'access_token': access_token
-            });
+            let access_token = body.access_token,
+                expires_in = body.expires_in;
+            res.cookie(accessTokenKey, access_token);
+            res.cookie(expiresInKey, expires_in);
+            res.redirect('/');
+            // res.send({
+            //     'access_token': access_token
+            // });
         }
     });
 });
