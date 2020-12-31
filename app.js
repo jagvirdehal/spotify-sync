@@ -40,7 +40,7 @@ app.use(express.static(__dirname + '/public'))
     .use(cookieParser());
 
 app.get('/login', (req, res) => {
-    res.sendFile(__dirname + 'login.html');
+    res.sendFile(__dirname + '/public/login.html');
 });
 
 app.get('/loginCall', (req, res) => {
