@@ -7,6 +7,17 @@ const issueTimeKey = 'issue_time';
 
 const REFRESH_BUFFER = 60;
 
+let display_name_temp;
+let currStamptemp;
+let totalStampTemp;
+let albumURLTemp;
+let artistsGroupTemp;
+let songTitleTemp;
+let colorThiefAlbumTemp;
+let progressLengthTemp;
+let visibleTemp;
+
+
 var app = new Vue({
     el: '.container',
     data: {
@@ -19,6 +30,20 @@ var app = new Vue({
         colorThiefAlbum: 'background-color: rgb(255, 0, 0)',
         progressLength: 'width: 0%',
         visible: false
+    },
+    methods: {
+        update: function(event) {
+            app.display_name = display_name_temp;
+            app.currStamp = currStampTemp;
+            app.totalStamp = totalStampTemp;
+            app.albumURL = albumURLTemp;
+            app.artistsGroup = artistsGroupTemp;
+            app.songTitle = songTitleTemp;
+            app.colorThiefAlbum = colorThiefAlbumTemp;
+            app.progressLength = progressLengthTemp;
+            app.visible = visibleTemp;
+        
+        }
     }
   })
   
@@ -64,7 +89,7 @@ if (access_token) {
             'Authorization': 'Bearer ' + access_token
         },
         success: function (response) {
-            app.display_name = response.display_name;
+            display_name_temp = response.display_name;
         }
     });
 } else {
@@ -120,28 +145,29 @@ setInterval(function () {
                     artistsGroup += ", " + response.item.artists[i].name
                 }
             }
-            app.artistsGroup = (artistsGroup);
+            artistsGroupTemp = (artistsGroup);
 
             //setting song title
             let songTitle = response.item.name;
             const maxChar = 54;
             if (songTitle.length > maxChar) {
-                app.songTitle = `${songTitle.substring(0, maxChar)}...`;
+                songTitleTemp = `${songTitle.substring(0, maxChar)}...`;
             }
 
             else {
-                app.songTitle = songTitle;
+                songTitleTemp = songTitle;
             }
 
             //setting album art
             let albumURL = response.item.album.images[0].url;
-            app.albumURL = albumURL;
+            albumURLTemp = albumURL;
+
             const colorThief = new ColorThief();
             const img = new Image();
 
             img.addEventListener('load', function () {
                 let mainColour = colorThief.getColor(img);
-                app.colorThiefAlbum = `background-color: rgb(${mainColour[0]},${mainColour[1]},${mainColour[2]})`;
+                colorThiefAlbumTemp = `background-color: rgb(${mainColour[0]},${mainColour[1]},${mainColour[2]})`;
             });
 
             let imageURL = albumURL;
@@ -156,18 +182,20 @@ setInterval(function () {
             let currStamp = response.progress_ms / 1000;
             let totalStamp = response.item.duration_ms / 1000;
             
-            app.currStamp = toTimeFormat(currStamp);
-            app.totalStamp = toTimeFormat(totalStamp);
+            currStampTemp = toTimeFormat(currStamp);
+            totalStampTemp = toTimeFormat(totalStamp);
         
 
             //creating progress bar
-            app.progressLength = `width: ${(currStamp * 100 / totalStamp)}%`;
+            progressLengthTemp = `width: ${(currStamp * 100 / totalStamp)}%`;
 
             //boolean that sees if the song is currently playing
             let is_playing = response.is_playing;
 
             //showing wether the song is explicit or not
-            app.visible = response.item.explicit;
+            visibleTemp = response.item.explicit;
+
+            app.update();
 
         }
     });
