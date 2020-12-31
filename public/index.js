@@ -100,6 +100,13 @@ if (error) {
     //     })
     // }, true);
 
+    var app = new Vue({
+        el: '#media-body',
+        data: {
+          currStamp: 'Hello Vue!'
+        }
+      })
+
     function toTimeFormat(seconds) {
         let m = Math.floor(seconds / 60);
         let s = Math.floor(seconds % 60);
