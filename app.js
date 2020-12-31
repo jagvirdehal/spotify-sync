@@ -1,20 +1,24 @@
+// Libraries
 const fs = require('fs');
 
 const express = require('express'); // Express web server framework
-const request = require('request'); // "Request" library
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+const PORT = 8888;
+
 const cors = require('cors');
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 
+const request = require('request'); // "Request" library
+
+// Client id and secret
 const client_id = fs.readFileSync('client_id.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your client id
 const client_secret = fs.readFileSync('client_secret.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your secret
 const redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
-/**
- * Generates a random string containing numbers and letters
- * @param  {number} length The length of the string
- * @return {string} The generated string
- */
+// Generate string function
 const generateRandomString = (length) => {
     let text = '';
     let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -26,6 +30,16 @@ const generateRandomString = (length) => {
     return text;
 };
 
+// Error response function
+const errorRes = (res, error) => {
+    res.redirect('/login#' +
+        querystring.stringify({
+            error: error
+        })
+    );
+}
+
+// Cookie keys
 const loggedInKey = 'logged_in';
 const accessTokenKey = 'access_token';
 const refreshTokenKey = 'refresh_token';
@@ -33,16 +47,22 @@ const expiresInKey = 'expires_in';
 const issueTimeKey = 'issue_time';
 const stateKey = 'spotify_auth_state';
 
-const app = express();
-
+// Express App settings
 app.use(express.static(__dirname + '/public'))
     .use(cors())
     .use(cookieParser());
 
+io.on('connection', (socket) => {
+    console.log('A user connected');
+});
+
+
+// Login page render
 app.get('/login', (req, res) => {
     res.sendFile(__dirname + '/public/login.html');
 });
 
+// Login method call
 app.get('/loginCall', (req, res) => {
 
     const state = generateRandomString(16);
@@ -69,20 +89,14 @@ app.get('/loginCall', (req, res) => {
     );
 });
 
+// Callback from the login request
 app.get('/callback', (req, res) => {
-
-    // your application requests refresh and access tokens
-    // after checking the state parameter
-
     const code = req.query.code || null;
     const state = req.query.state || null;
     const storedState = req.cookies ? req.cookies[stateKey] : null;
 
     if (state === null || state !== storedState) {
-        res.redirect('/login#' +
-            querystring.stringify({
-                error: 'state_mismatch'
-            }));
+        errorRes(res, 'state_mismatch');
     } else {
         res.clearCookie(stateKey);
         const authOptions = {
@@ -125,11 +139,7 @@ app.get('/callback', (req, res) => {
                 // we can also pass the token to the browser to make requests from there
                 res.redirect('/');
             } else {
-                res.redirect('/login#' +
-                    querystring.stringify({
-                        error: 'invalid_token'
-                    })
-                );
+                errorRes(res, invalid_token);
             }
         });
     }
@@ -163,5 +173,6 @@ app.get('/refresh_token', (req, res) => {
     });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+http.listen(PORT, () => {
+    console.log(`Listening on ${PORT}`);
+});
