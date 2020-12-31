@@ -58,7 +58,7 @@ if (access_token) {
     });
 } else {
     // render initial screen
-    window.location.href = "/login.html";
+    window.location.href = "/login";
 }
 
     // Check every 30 seconds for expiry
