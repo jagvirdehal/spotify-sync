@@ -40,6 +40,10 @@ app.use(express.static(__dirname + '/public'))
     .use(cookieParser());
 
 app.get('/login', (req, res) => {
+    res.sendFile(__dirname + 'login.html');
+});
+
+app.get('/loginCall', (req, res) => {
 
     const state = generateRandomString(16);
     res.cookie(stateKey, state);
