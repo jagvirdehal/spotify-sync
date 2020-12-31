@@ -7,6 +7,21 @@ const issueTimeKey = 'issue_time';
 
 const REFRESH_BUFFER = 60;
 
+var app = new Vue({
+    el: '.container',
+    data: {
+        display_name: 'John Appleseed',
+        currStamp: '00',
+        totalStamp: '00',
+        albumURL:'https://images.homedepot-static.com/catalog/productImages/300/5c/5c5fed4a-8e18-4942-b3a7-bf58f4e55243_300.jpg',
+        artistsGroup: '~Please~',
+        songTitle: '~Play a Song~',
+        colorThiefAlbum: 'background-color: rgb(255, 0, 0)',
+        progressLength: 'width: 0%',
+        visible: false
+    }
+  })
+  
 // Code from W3schools
 function getCookie(cname) {
     var name = cname + "=";
@@ -23,10 +38,6 @@ function getCookie(cname) {
     }
     return "";
 }
-
-var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-    userProfileTemplate = Handlebars.compile(userProfileSource),
-    userProfilePlaceholder = document.getElementById('user-profile');
 
 let access_token = getCookie(accessTokenKey),
     refresh_token = getCookie(refreshTokenKey),
@@ -53,7 +64,7 @@ if (access_token) {
             'Authorization': 'Bearer ' + access_token
         },
         success: function (response) {
-            userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+            app.display_name = response.display_name;
         }
     });
 } else {
@@ -80,12 +91,7 @@ if (access_token) {
     //     })
     // }, true);
 
-    var app = new Vue({
-        el: '#media-body',
-        data: {
-          currStamp: 'Hello Vue!'
-        }
-      })
+    
 
     function toTimeFormat(seconds) {
         let m = Math.floor(seconds / 60);
@@ -104,7 +110,8 @@ setInterval(function () {
         },
         type: "GET",
         success: function (response) {
-
+            
+            //setting artist(s) names
             let numArtists = response.item.artists.length;
             let artistsGroup = response.item.artists[0].name;
 
@@ -113,31 +120,28 @@ setInterval(function () {
                     artistsGroup += ", " + response.item.artists[i].name
                 }
             }
-
-            //setting artist(s) names
-            document.getElementById('artist').innerHTML = (artistsGroup);
+            app.artistsGroup = (artistsGroup);
 
             //setting song title
             let songTitle = response.item.name;
             const maxChar = 54;
             if (songTitle.length > maxChar) {
-                document.getElementById('title').innerHTML = `${songTitle.substring(0, maxChar)}...`;
+                app.songTitle = `${songTitle.substring(0, maxChar)}...`;
             }
 
             else {
-                document.getElementById('title').innerHTML = songTitle;
+                app.songTitle = songTitle;
             }
 
             //setting album art
             let albumURL = response.item.album.images[0].url;
-            document.getElementById("albumArt").src = albumURL;
-
+            app.albumURL = albumURL;
             const colorThief = new ColorThief();
             const img = new Image();
 
             img.addEventListener('load', function () {
                 let mainColour = colorThief.getColor(img);
-                document.getElementById('listener').style.backgroundColor = `rgb(${mainColour[0]},${mainColour[1]},${mainColour[2]})`;
+                app.colorThiefAlbum = `background-color: rgb(${mainColour[0]},${mainColour[1]},${mainColour[2]})`;
             });
 
             let imageURL = albumURL;
@@ -151,23 +155,20 @@ setInterval(function () {
             //creating timestamps
             let currStamp = response.progress_ms / 1000;
             let totalStamp = response.item.duration_ms / 1000;
-            document.getElementById("timestamp").innerHTML = toTimeFormat(currStamp) + " / " + toTimeFormat(totalStamp);
+            
+            app.currStamp = toTimeFormat(currStamp);
+            app.totalStamp = toTimeFormat(totalStamp);
+        
 
             //creating progress bar
-            document.getElementById("progressLength").style.width = (currStamp * 100 / totalStamp) + '%';
+            app.progressLength = `width: ${(currStamp * 100 / totalStamp)}%`;
 
             //boolean that sees if the song is currently playing
             let is_playing = response.is_playing;
 
             //showing wether the song is explicit or not
-            let is_explicit = response.item.explicit;
+            app.visible = response.item.explicit;
 
-            if (is_explicit) {
-                document.getElementById('explicit').style.visibility = 'visible';
-            }
-            else {
-                document.getElementById('explicit').style.visibility = 'hidden';
-            }
         }
     });
 }, 500);

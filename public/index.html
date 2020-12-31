@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
 </head>
 
@@ -18,30 +19,28 @@
   <div class="container">
     <div id="loggedin">
       <div id="user-profile">
+        <img id ='border' src='/img/border.png'>
+        <h1 id="h1">Welcome {{display_name}}</h1>
+        <div id='media-body'>
+          <div id='listener' v-bind:style="colorThiefAlbum">
+            <img id='albumArt' v-bind:src='albumURL'>
+          </div>
+          <div id="details">
+            <h3>Currently Playing:</h3>
+            <div id='flexContainer1'>
+              <h2 id='title'>{{songTitle}}</h2>
+              <img id='explicit' src='/img/explicit.png' v-if="visible">
+            </div>
+            <h2 id='artist'>{{artistsGroup}}</h2>
+            <h2 id='timestamp'>{{currStamp}} / {{totalStamp}}</h2>
+            <div id='progressBar'>
+              <div id='progressLength' v-bind:style='progressLength'></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <script id="user-profile-template" type="text/x-handlebars-template">
-      <img id ='border' src='/img/border.png'>
-      <h1 id="h1">Welcome {{display_name}}</h1>
-      <div id='media-body'>
-        <div id='listener'>
-          <img id='albumArt' src="">
-        </div>
-        <div id="details">
-          <h3>Currently Playing:</h3>
-          <div id='flexContainer1'>
-            <h2 id='title'></h2>
-            <img id='explicit' src='/img/explicit.png'>
-          </div>
-          <h2 id='artist'></h2>
-          <h2 id='timestamp'></h2>
-          <div id='progressBar'>
-            <div id='progressLength'></div>
-          </div>
-        </div>
-      </div>
-    </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
