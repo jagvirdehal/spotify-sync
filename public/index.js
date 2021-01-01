@@ -31,6 +31,7 @@ var app = new Vue({
         colorThiefAlbum: 'background-color: rgb(255, 0, 0)',
         progressLength: 'width: 0%',
         users: [],
+        host: {},
         visible: false
     },
     methods: {

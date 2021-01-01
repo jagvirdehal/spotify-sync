@@ -19,8 +19,8 @@ const socket = io();
 const myPath = document.location.pathname.slice(1);
 
 let user = {
-    name: 'Jagvir',
-    id: '48asdasasdasdad',
+    name: 'Name',
+    id: 'Id',
     image: "https://i.scdn.co/image/ab67616d0000b27398e08f603553915a041b6937",
     room: myPath,
 };
@@ -59,4 +59,8 @@ socket.on('redirect', (url) => {
 
 socket.on('get-users', (users) => {
     app.users = users;
+});
+
+socket.on('get-host', (host) => {
+    app.host = host;
 });

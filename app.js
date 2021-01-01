@@ -24,7 +24,7 @@ const request = require('request'); // "Request" library
 // Client id and secret
 const client_id = fs.readFileSync('client_id.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your client id
 const client_secret = fs.readFileSync('client_secret.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your secret
-const redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+const redirect_uri = 'https://4ee75f97e68a.ngrok.io/callback'; // Your redirect uri
 
 // Generate string function
 const generateRandomString = (length) => {
@@ -93,18 +93,19 @@ io.on('connection', (socket) => {
         let room = user.room;
         let oldRoom = userMap.getRoom(user);
         let id = user.id;
-        let users;
-        let usersFull;
+        let users, userIds;
+        let host, hostId;
 
         // Join user to the room
         if (lobby.join(room, id)) { // True if room does not exist
+            console.log("OOP");
             socket.emit('redirect', {path: `/`});
             return;
         }
 
         // Update user and clean all rooms
         userMap.add(user);
-        cleanAllRooms();
+        // cleanAllRooms();
 
         // Redirect all user sockets to the latest room
         io.to(id).emit('redirect', {path: `/${user.room}`});
@@ -114,23 +115,23 @@ io.on('connection', (socket) => {
         socket.join(id);
 
         // Get users
-        users = lobby.getListeners(room);
-        usersFull = users.map((user, index) => {
+        userIds = lobby.getListeners(room);
+        users = userIds.map((user, index) => {
             return userMap.get(user);
         });
-
-        // console.log("Users:");
-        // console.log(users);
+        hostId = lobby.getHost(room);
+        host = userMap.get(hostId);
 
         io.to(room).emit('message', `${user.name} has entered the room ${room}`);
-        io.to(room).emit('message', `${users} are in the room ${room}`);
-        io.to(room).emit('get-users', usersFull);
+        io.to(room).emit('message', `${userIds} are in the room ${room}`);
+        io.to(room).emit('get-users', users);
+        io.to(room).emit('get-host', host);
         io.emit('message', `${JSON.stringify(Object.keys(lobby))}`);
     });
 
     socket.on('disconnecting', () => {
         socket.rooms.forEach(roomname => {
-            lobby.clean(roomname);
+            // lobby.clean(roomname);
         });
     });
 
