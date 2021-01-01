@@ -94,6 +94,7 @@ io.on('connection', (socket) => {
         let oldRoom = userMap.getRoom(user);
         let id = user.id;
         let users;
+        let usersFull;
 
         // Join user to the room
         if (lobby.join(room, id)) { // True if room does not exist
@@ -114,12 +115,16 @@ io.on('connection', (socket) => {
 
         // Get users
         users = lobby.getListeners(room);
+        usersFull = users.map((user, index) => {
+            return userMap.get(user);
+        });
 
         // console.log("Users:");
         // console.log(users);
 
         io.to(room).emit('message', `${user.name} has entered the room ${room}`);
         io.to(room).emit('message', `${users} are in the room ${room}`);
+        io.to(room).emit('get-users', usersFull);
         io.emit('message', `${JSON.stringify(Object.keys(lobby))}`);
     });
 

@@ -30,6 +30,7 @@ var app = new Vue({
         songTitle: '~Play a Song~',
         colorThiefAlbum: 'background-color: rgb(255, 0, 0)',
         progressLength: 'width: 0%',
+        users: [],
         visible: false
     },
     methods: {
