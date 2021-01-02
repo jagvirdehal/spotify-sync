@@ -135,7 +135,7 @@ h2 {
     color: rgb(207, 207, 207);
 }
 
-h3 {
+h3, h4 {
     text-align: left;
     color: white;
     font-size: 25px;
@@ -213,4 +213,39 @@ h3 {
     width: 0%;
     border-radius: 10px;
     background-color: rgb(32, 227, 101);
+}
+
+#listenerList{
+    margin-top: 5%;
+    margin-left: 100px;
+    font-size: 15px;
+    text-align: left;
+}
+
+#userImages {
+    position: relative;
+    height: 50px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 50%;
+    z-index: 1;
+    
+}
+
+#users {
+    text-align: left;
+    display: flex;
+    padding-bottom: 30px;
+}
+
+h4 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#host{
+    position: relative;
+    width: 20px;
+    margin-left: 19px;
+    z-index: 2;
 }

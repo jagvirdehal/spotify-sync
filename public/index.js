@@ -132,6 +132,7 @@ if (access_token) {
         return (m + ":" + s);
     }
 
+
 setInterval(function () {
     $.ajax({
         url: 'https://api.spotify.com/v1/me/player/currently-playing',
@@ -150,13 +151,20 @@ setInterval(function () {
                     artistsGroup += ", " + response.item.artists[i].name
                 }
             }
-            artistsGroupTemp = (artistsGroup);
+
+            const maxCharArtists = 70;
+            if (artistsGroup.length > maxCharArtists) {
+                artistsGroupTemp = `${artistsGroup.substring(0, maxCharArtists)}...`;
+            }
+            else{
+                artistsGroupTemp =  artistsGroup;
+            }
 
             //setting song title
             let songTitle = response.item.name;
-            const maxChar = 54;
-            if (songTitle.length > maxChar) {
-                songTitleTemp = `${songTitle.substring(0, maxChar)}...`;
+            const maxCharTitle = 54;
+            if (songTitle.length > maxCharTitle) {
+                songTitleTemp = `${songTitle.substring(0, maxCharTitle)}...`;
             }
 
             else {

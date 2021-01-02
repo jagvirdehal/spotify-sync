@@ -38,11 +38,16 @@
             </div>
           </div>
         </div>
-        <div id="users">
-          <img v-bind:src="host.image" v-bind:alt="host.name" v-bind:title="host.name">
-          <div id="user" v-for="user in users">
-            <img v-bind:src="user.image" v-bind:alt="user.name" v-bind:title="user.name" v-if="user.id != host.id">
+        <div id="listenerList">
+          <h4>Users Listening: </h4>
+          <img id='host' src='/img/host.png'>
+          <div id="users">
+            <img id='userImages' v-bind:src="host.image" v-bind:alt="host.name" v-bind:title="host.name">
+            <div id="user" v-for="user in users">
+              <img id='userImages' v-bind:src="user.image" v-bind:alt="user.name" v-bind:title="user.name" v-if="user.id != host.id">
+            </div>
           </div>
+
         </div>
       </div>
     </div>
