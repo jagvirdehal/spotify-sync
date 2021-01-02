@@ -24,7 +24,7 @@ const request = require('request'); // "Request" library
 // Client id and secret
 const client_id = fs.readFileSync('client_id.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your client id
 const client_secret = fs.readFileSync('client_secret.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your secret
-const redirect_uri = 'https://4ee75f97e68a.ngrok.io/callback'; // Your redirect uri
+const redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
 // Generate string function
 const generateRandomString = (length) => {
@@ -60,13 +60,16 @@ app.use(express.static(__dirname + '/public'))
     .use(cors())
     .use(cookieParser());
 
+let TOTAL_SOCKETS = new Set();
+
+const cleanAllRooms = () => {
+    for (let room of lobby.rooms.keys())
+        lobby.clean(room);
+};
+
 // Connection and broadcasting logic
 io.on('connection', (socket) => {
-    const cleanAllRooms = () => {
-        Object.keys(lobby.rooms).forEach(room => {
-            lobby.clean(room);
-        });
-    };
+    TOTAL_SOCKETS.add(socket.id);
 
     socket.on('create-room', (user) => {
         let room;
@@ -81,6 +84,11 @@ io.on('connection', (socket) => {
         userMap.add(user);
         lobby.create(room, id);
 
+        // Leave all rooms
+        socket.rooms.forEach(roomname => {
+            socket.leave(roomname);
+        });
+
         // Attach socket to room and user
         socket.join(room);
         socket.join(id);
@@ -91,58 +99,115 @@ io.on('connection', (socket) => {
 
     socket.on('join-room', (user) => {
         let room = user.room;
-        let oldRoom = userMap.getRoom(user);
-        let id = user.id;
-        let users, userIds;
+        let userId = user.id;
         let host, hostId;
+        let users, uids;
 
         // Join user to the room
-        if (lobby.join(room, id)) { // True if room does not exist
-            console.log("OOP");
-            socket.emit('redirect', {path: `/`});
+        if (lobby.join(room, userId)) { // True if room does not exist
+            socket.emit('force-create');
             return;
         }
 
-        // Update user and clean all rooms
+        // Update user
         userMap.add(user);
-        // cleanAllRooms();
+        
+        // Leave all rooms
+        socket.rooms.forEach(roomname => {
+            socket.leave(roomname);
+        });
+
+        // Leave all lobby rooms
+        let sockets = userMap.getSockets(userId);
+        if (sockets) {
+            for (let socketId of sockets) {
+                io.sockets.sockets.get(socketId).rooms.forEach(roomname => {
+                    if (userMap.getRoom(userId) !== roomname)
+                        lobby.leave(roomname, userId);
+                });
+            }
+        }
 
         // Redirect all user sockets to the latest room
-        io.to(id).emit('redirect', {path: `/${user.room}`});
+        io.to(userId).emit('redirect', {path: `/${user.room}`});
         
         // Attach socket to room and user
         socket.join(room);
-        socket.join(id);
+        socket.join(userId);
+        userMap.addSocket(userId, socket.id);
 
         // Get users
-        userIds = lobby.getListeners(room);
-        users = userIds.map((user, index) => {
+        uids = lobby.getListeners(room);
+        users = uids.map((user, index) => {
             return userMap.get(user);
         });
         hostId = lobby.getHost(room);
         host = userMap.get(hostId);
 
+        // If there are too many lobbies, clean
+        if (lobby.rooms.size > userMap.users.size + 5)
+            cleanAllRooms();
+
         io.to(room).emit('message', `${user.name} has entered the room ${room}`);
-        io.to(room).emit('message', `${userIds} are in the room ${room}`);
+        io.to(room).emit('message', `${uids} are in the room ${room}`);
         io.to(room).emit('get-users', users);
         io.to(room).emit('get-host', host);
         io.emit('message', `${JSON.stringify(Object.keys(lobby))}`);
     });
 
-    socket.on('disconnecting', () => {
-        socket.rooms.forEach(roomname => {
-            // lobby.clean(roomname);
-        });
+    socket.on('update-music', (user, songData) => {
+        if (user.id !== lobby.getHost(user.room) || lobby.rooms.get(user.room) === undefined)
+            return;
+
+        for (let member of lobby.rooms.get(user.room)) {
+            if (member === user.id)
+                continue;
+            
+            if (userMap.getSockets(member) !== undefined) {
+                for (let socketId of userMap.getSockets(member)) {
+                    io.sockets.sockets.get(socketId).emit('update-music', songData);
+                    break;
+                }
+            }
+        }
     });
 
-    socket.on('update_music', () => {
+    socket.on('disconnecting', () => {
+        TOTAL_SOCKETS.delete(socket.id);
+        socket.rooms.forEach(roomname => {
+            let userId = roomname;
+            let socketList = userMap.getSockets(userId);
 
+            if (!socketList) {
+                return;
+            }
+
+            for (let socketId of socketList) {
+                if (socketId === socket.id || !TOTAL_SOCKETS.has(socketId)) {
+                    userMap.removeSocket(userId, socketId);
+                }
+            }
+
+            socketList = userMap.getSockets(userId);
+
+            if (socketList.size === 0) {
+                // Remove user from server
+                userMap.remove(userId);
+                // Remove user from all rooms
+                for (let room of lobby.rooms.keys()) {
+                    lobby.leave(room, userId)
+                }
+            }
+        });
     });
 });
 
 // setInterval(() => {
-//     
-// }, 5000);
+//     console.log("Update:");
+//     console.log(TOTAL_SOCKETS);
+//     console.log(userMap.sockets);
+//     console.log(lobby.rooms);
+// }, 1000);
 
 // Login page render
 app.get('/login', (req, res) => {

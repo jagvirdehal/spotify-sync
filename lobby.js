@@ -1,71 +1,66 @@
 const UserMap = require('./usermap.js');
 
 class Lobby {
-    rooms = {}
-    hosts = {}
+    rooms = new Map()       // Roomname -> set of userIds
+    hosts = new Map()       // Roomname -> host's userId
 
     create(room, hostId) {
-        this.rooms[room] = [hostId];
-        this.hosts[room] = hostId;
+        this.rooms.set(room, new Set());
+        this.rooms.get(room).add(hostId);
+
+        this.hosts.set(room, hostId);
     }
 
     join(room, userId) {
-        if (this.rooms[room] && !this.inRoom(room, userId)) {
-            this.rooms[room].push(userId);
+        if (this.rooms.has(room)) {
+            this.rooms.get(room).add(userId);
             return false;
-        } else if (!this.rooms[room]) {
-            return true; // True if error
+        } else {
+            return true;    // True if room does not exist
         }
-        return false;
+    }
+
+    leave(room, userId) {
+        if (this.rooms.has(room)) {
+            this.rooms.get(room).delete(userId);
+        }
     }
 
     clean(room) {
-        if (this.rooms[room]) {
-            this.rooms[room].forEach((member, index) => {
+        if (this.rooms.has(room)) {
+            for (let member of this.rooms.get(room)) {
                 if (userMap.getRoom(member) !== room)
-                    this.rooms[room].pop(index);
-            });
+                    this.rooms.get(room).delete(member);
+            }
         }
 
-        if (this.hosts[room] && !this.inRoom(room, this.hosts[room])) {
+        if (this.hosts.has(room) && !this.inRoom(room, this.hosts.get(room))) {
             this.remove(room);
         }
     }
 
     inRoom(room, userId) {
-        if (!this.rooms[room]) {
-            return false
-        }
-
-        for (let i = 0; i < this.rooms[room].length; i++) {
-            let member = this.rooms[room][i];
-            if (userId === member) {
-                return true;
-            }
-        }
-
-        return false;
+        return this.rooms.has(room) && this.rooms.get(room).has(userId);
     }
 
     remove(room) {
-        if (this.rooms[room])
-            delete this.rooms[room]
-        if (this.hosts[room])
-            delete this.hosts[room]
+        this.rooms.delete(room);
+        this.hosts.delete(room);
     }
 
     getHost(room) {
-        if (this.hosts[room])
-            return this.hosts[room]
+        if (this.hosts.has(room))
+            return this.hosts.get(room)
         else
             return null;
     }
 
     getListeners(room) {
-        if (this.rooms[room])
-            return this.rooms[room];
-        else
+        if (this.rooms.has(room)) {
+            return Array.from(this.rooms.get(room));
+        } else {
             return null;
+        }
     }
 };
 
