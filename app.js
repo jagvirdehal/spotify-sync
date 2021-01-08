@@ -22,9 +22,15 @@ const [lobby, userMap] = require('./lobby.js');
 const request = require('request'); // "Request" library
 
 // Client id and secret
-const client_id = fs.readFileSync('client_id.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your client id
-const client_secret = fs.readFileSync('client_secret.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your secret
-const redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+let client_id, client_secret;
+try {
+    client_id = fs.readFileSync('client_id.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your client id
+    client_secret = fs.readFileSync('client_secret.txt', { encoding: "utf-8", flag: "r" }).trim(); // Your secret
+} catch (err) {
+    client_id = process.env.CLIENT_ID;
+    client_secret = process.env.CLIENT_SECRET;
+}
+const redirect_uri = 'https://4195235527ee.ngrok.io/callback'; // Your redirect uri
 
 // Generate string function
 const generateRandomString = (length) => {

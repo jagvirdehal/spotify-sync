@@ -1,5 +1,7 @@
 // Import socket module
 const socket = io();
+const SYNC_TOLERANCE = 5000;
+const SEND_MUSIC_INTERVAL = 5000;
 
 // Get path value
 const myPath = document.location.pathname.slice(1);
@@ -69,7 +71,7 @@ const setMusic = (songData) => {
             }),
             type: "PUT",
         });
-    } else if (Math.abs(curData.progress_ms - songData.progress_ms) > 3000) {
+    } else if (Math.abs(curData.progress_ms - songData.progress_ms) > SYNC_TOLERANCE) {
         $.ajax({
             url: "https://api.spotify.com/v1/me/player/seek?" + $.param({ position_ms: songData.progress_ms }),
             headers: {
@@ -157,4 +159,4 @@ $.ajax({
 });
 
 setInterval(updateMusic, 500);
-setInterval(sendMusic, 5000);
+setInterval(sendMusic, SEND_MUSIC_INTERVAL);
