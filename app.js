@@ -5,7 +5,7 @@ const express = require('express'); // Express web server framework
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-const PORT = 8888;
+const PORT = process.env.PORT || 8888;
 
 // Express addons
 const cors = require('cors');
